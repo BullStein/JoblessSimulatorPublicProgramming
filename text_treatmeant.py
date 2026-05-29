@@ -25,7 +25,7 @@ def get_last_text(text_path=None):
     ensure_dir(text_path)  
         
     data = get_data()  
-    text_index = actual_file_index(files_path="texts")
+    text_index = actual_file_index(files_path="texts") - 1
     
     file_path = os.path.join(text_path, f"text_{text_index}.txt")
 

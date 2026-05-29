@@ -3,6 +3,9 @@
 ## v1.0 - 28/05/2026
 
 ### Added
+* tab_actions.py
+
+  * ações relacionadas a aba do navegador atual
 
 * locate_tab.py
 

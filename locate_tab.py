@@ -9,19 +9,6 @@ def locate_tab(browser_name, tabname_target):
 
     found = False
 
-    max_tabs = 0
-
-    # count browser windows
-    for window in gw.getAllWindows():
-
-        if browser_name.lower() in window.title.lower():
-
-            max_tabs += 1
-
-    max_tabs = max_tabs * 20
-
-    print(f"MAX TABS: {max_tabs}")
-
     for browser in gw.getAllWindows():
 
         if browser_name.lower() not in browser.title.lower():
@@ -34,47 +21,51 @@ def locate_tab(browser_name, tabname_target):
 
         time.sleep(1)
 
-        print("\nTESTING WINDOW:")
-        print(browser.title)
 
-        visited_tabs = []
+        first_tab = ""
+        started = False
 
-        for i in range(max_tabs):
+        for i in range(50):
 
             current = gw.getActiveWindow()
 
             if not current:
                 continue
 
-            title = current.title
+            title = current.title.strip()
 
-            if not title.strip():
+            if not title:
                 continue
 
-            if title in visited_tabs:
+
+            if not started:
+                first_tab = title
+                started = True
+
+            elif title == first_tab:
                 break
 
-            visited_tabs.append(title)
-
-            print(f"[{i}] {title}")
-
-            # checks all target names
             for target in tabname_target:
 
                 if target.lower() in title.lower():
 
-                    print(f"\nFOUND: {target}")
 
                     found = True
-
                     break
 
             if found:
                 break
 
-            pyautogui.hotkey("ctrl", "tab")
+            # Opera / Opera GX fix
+            if "opera" in browser_name.lower():
 
-            time.sleep(0.7)
+                pyautogui.hotkey("ctrl", "pagedown")
+
+            else:
+
+                pyautogui.hotkey("ctrl", "tab")
+
+            time.sleep(0.5)
 
         if found:
             break
@@ -82,3 +73,4 @@ def locate_tab(browser_name, tabname_target):
     if not found and terminal:
 
         terminal.activate()
+        return False
