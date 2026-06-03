@@ -104,7 +104,7 @@ def _search_text(ocr_data: dict, target_text: str, tolerance: int = 10) -> list[
 def locate_and_click(
     image_index: int,
     data: dict,
-    target_text: str,
+    target_text: str | list[str],
     min_confidence: int = 30,
     click: bool = True,
 ) -> bool:
@@ -118,21 +118,25 @@ def locate_and_click(
 
     versions = _preprocess(img_bgr)
 
-    all_matches = []
-    for version in versions:
-        ocr_data = _run_ocr(version, lang)
-        matches = _search_text(ocr_data, target_text, min_confidence)
-        all_matches.extend(matches)
+    targets = [target_text] if isinstance(target_text, str) else target_text
 
-    if not all_matches:
-        return False
+    for target in targets:
+        all_matches = []
+        for version in versions:
+            ocr_data = _run_ocr(version, lang)
+            matches = _search_text(ocr_data, target, min_confidence)
+            all_matches.extend(matches)
 
-    all_matches.sort(key=lambda m: (m["type"] == "line", m["conf"]), reverse=True)
-    best = all_matches[0]
+        if not all_matches:
+            continue
 
+        all_matches.sort(key=lambda m: (m["type"] == "line", m["conf"]), reverse=True)
+        best = all_matches[0]
 
-    if click:
-        pyautogui.moveTo(best["x"], best["y"], duration=0.2)
-        pyautogui.click()
+        if click:
+            pyautogui.moveTo(best["x"], best["y"], duration=0.2)
+            pyautogui.click()
 
-    return True
+        return True
+
+    return False

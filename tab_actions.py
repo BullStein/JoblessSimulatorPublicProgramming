@@ -1,5 +1,7 @@
 import pygetwindow as gw
 import pyautogui
+import pyperclip
+import time
 
 def fullscreen_tab():
     window = gw.getActiveWindow()
@@ -25,12 +27,27 @@ def set_zoom(level: int = 100) -> None:
             pyautogui.hotkey("ctrl", "+")
         else:
             pyautogui.hotkey("ctrl", "-")
+def get_url_active_tab():
 
+    pyautogui.hotkey('ctrl', 'l')
+    time.sleep(0.2)
+    pyautogui.hotkey('ctrl', 'a')
+    pyautogui.hotkey('ctrl', 'c')
+    time.sleep(0.1)
+    pyautogui.press('escape')
+
+    return pyperclip.paste()  
+      
 def reset_zoom() -> None:
     pyautogui.hotkey("ctrl", "0")
 
 def scroll_page_down() -> None:
     pyautogui.scroll(-500)
-    
+
 def scroll_page_up() -> None:
     pyautogui.scrool(500)
+
+def open_new_catho_tab():
+    pyautogui.hotkey("ctrl","t")
+    pyautogui.write("https://www.catho.com.br/vagas/sugestao/")
+    pyautogui.hotkey("Enter")

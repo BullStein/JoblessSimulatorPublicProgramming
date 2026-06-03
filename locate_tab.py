@@ -2,7 +2,11 @@ import pygetwindow as gw
 import pyautogui
 import time
 
-
+def pop_up_terminal():
+    terminal = gw.getActiveWindow()
+    terminal.activate(
+        
+    )
 def locate_tab(browser_name, tabname_target):
 
     terminal = gw.getActiveWindow()
@@ -72,5 +76,4 @@ def locate_tab(browser_name, tabname_target):
 
     if not found and terminal:
 
-        terminal.activate()
         return False
