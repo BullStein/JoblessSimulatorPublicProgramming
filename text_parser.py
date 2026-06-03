@@ -252,10 +252,11 @@ def parse_job(raw_text: str) -> Job:
     )
 
 
-def save_job(job: Job, output_dir: str = "data") -> str:
+def save_job(job: Job, index: int, output_dir: str = "data/jobs") -> str:
     os.makedirs(output_dir, exist_ok=True)
-    timestamp = datetime.now().isoformat(timespec="seconds")
-    filename = re.sub(r"[^\w]", "_", timestamp) + ".json"
+    timestamp = datetime.now().strftime("%d-%m_%H-%M")
+    job_name = re.sub(r"[^\w]", "_", job.job_title or "unknown")
+    filename = f"{index}_{job_name}_{timestamp}.json"
     filepath = os.path.join(output_dir, filename)
     payload = {"saved_at": timestamp, **asdict(job)}
     with open(filepath, "w", encoding="utf-8") as f:

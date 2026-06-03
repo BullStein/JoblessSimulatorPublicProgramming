@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 
 data_dir = "data/data.json"
 
@@ -42,7 +43,18 @@ def get_data(data_path=data_dir):
         with open(data_path, "w", encoding="utf-8") as f:
             json.dump(base_data, f, indent=4)
         return base_data
+    
+def delete_all_files():
+    FOLDERS = ["txts", "imgs","data/jobs"]
 
+    for folder in FOLDERS:
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
+            os.makedirs(folder)
+            print(f"[OK] {folder}/ cleared")
+        else:
+            print(f"[WARN] {folder}/ not found, skipping")
+            
 def actual_file_index(data=None, files_path="imgs"):
     ensure_dir(files_path)
 
@@ -107,6 +119,22 @@ def actual_text_index(data=None, texts_path="texts"):
         return data["tesseract"]["text_index"]
 
     return file_qnty
+
+def last_job_index(jobs_path: str = "data/jobs", data_path: str = data_dir) -> int:
+    ensure_dir(jobs_path)
+
+    file_list = [
+        f for f in os.listdir(jobs_path)
+        if os.path.isfile(os.path.join(jobs_path, f)) and f.endswith(".json")
+    ]
+
+    index = len(file_list)
+
+    data = get_data(data_path)
+    data.setdefault("jobs", {})["last_index"] = index
+    save_data(data, data_path)
+
+    return index
 
 def save_data(new_data, data_path=data_dir):
     directory = os.path.dirname(data_path)
