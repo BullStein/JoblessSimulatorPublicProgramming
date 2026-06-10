@@ -14,6 +14,18 @@ def fullscreen_tab():
     if window.width < screen_width or window.height < screen_height:
         pyautogui.press("f11")
 
+
+def exit_fullscreen_tab():
+    window = gw.getActiveWindow()
+
+    if window is None:
+        return
+
+    screen_width, screen_height = pyautogui.size()
+
+    if window.width >= screen_width and window.height >= screen_height:
+        pyautogui.press("f11")
+    
 ZOOM_LIST = [25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500]
 
 def set_zoom(level: int = 100) -> None:
@@ -28,7 +40,7 @@ def set_zoom(level: int = 100) -> None:
         else:
             pyautogui.hotkey("ctrl", "-")
 def get_url_active_tab():
-
+    exit_fullscreen_tab()
     pyautogui.hotkey('ctrl', 'l')
     time.sleep(0.2)
     pyautogui.hotkey('ctrl', 'a')
