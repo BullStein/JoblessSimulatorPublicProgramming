@@ -15,3 +15,5 @@ from text_parser import *
 from locate_and_act import *
 from locate_tab import *
 from tab_actions import *
+
+from notifications import *

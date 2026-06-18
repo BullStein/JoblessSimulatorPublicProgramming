@@ -8,7 +8,11 @@ base_data = {
     "tesseract": {
         "image_index": 0,
         "text_index": 0,
+        "job_index": 0,
         "lang": "por"
+    },
+    "account" : {
+        "is_logged" : False
     }
 }
 
@@ -120,6 +124,11 @@ def actual_text_index(data=None, texts_path="texts"):
 
     return file_qnty
 
+def get_last_text(index=actual_text_index()):
+    with open(f"txts/text_{index}", "r", enconding="utf-8") as f:
+        text = f.read()
+    return text
+
 def last_job_index(jobs_path: str = "data/jobs", data_path: str = data_dir) -> int:
     ensure_dir(jobs_path)
 
@@ -135,6 +144,29 @@ def last_job_index(jobs_path: str = "data/jobs", data_path: str = data_dir) -> i
     save_data(data, data_path)
 
     return index
+
+def actual_pased_job_index(data=None, jobs_path="data/job_parsed"):
+    ensure_dir(jobs_path)
+
+    if data is None:
+        data = get_data()
+
+    file_list = [
+        f for f in os.listdir(texts_path)
+        if os.path.isfile(os.path.join(texts_path, f))
+    ]
+
+    file_qnty = len(file_list)
+
+    if (
+        "tesseract" in data and
+        "job_index" in data["tesseract"] and
+        file_qnty == data["tesseract"]["job_index"]
+    ):
+        return data["tesseract"]["job_index"]
+
+    return file_qnty
+
 
 def save_data(new_data, data_path=data_dir):
     directory = os.path.dirname(data_path)

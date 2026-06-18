@@ -2,71 +2,51 @@ import pygetwindow as gw
 import pyautogui
 import time
 
-def pop_up_terminal():
-    terminal = gw.getActiveWindow()
-    terminal.activate(
-        
-    )
-def locate_tab(browser_name, tabname_target):
 
+def locate_tab(browser_name: str, tabname_target: list[str]) -> bool:
     terminal = gw.getActiveWindow()
-
     found = False
 
     for browser in gw.getAllWindows():
-
         if browser_name.lower() not in browser.title.lower():
             continue
-
         if not browser.title.strip():
             continue
 
         browser.activate()
-
         time.sleep(1)
 
-
-        first_tab = ""
-        started = False
+        first_tab = None
 
         for i in range(50):
-
             current = gw.getActiveWindow()
-
             if not current:
                 continue
 
             title = current.title.strip()
-
             if not title:
                 continue
 
 
-            if not started:
-                first_tab = title
-                started = True
-
-            elif title == first_tab:
-                break
-
+            # Check targets FIRST, before comparing to first_tab
             for target in tabname_target:
-
                 if target.lower() in title.lower():
-
-
                     found = True
                     break
 
             if found:
                 break
 
-            # Opera / Opera GX fix
+            # Now check if we've looped back to the start
+            if first_tab is None:
+                first_tab = title
+            elif title == first_tab:
+                break  # Full loop complete, target not found
+
+            # Advance to next tab
             if "opera" in browser_name.lower():
-
                 pyautogui.hotkey("ctrl", "pagedown")
-
             else:
-
                 pyautogui.hotkey("ctrl", "tab")
 
             time.sleep(0.5)
@@ -75,5 +55,5 @@ def locate_tab(browser_name, tabname_target):
             break
 
     if not found and terminal:
-
-        return False
+        return found
+    return found
