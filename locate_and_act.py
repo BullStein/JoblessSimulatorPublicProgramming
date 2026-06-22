@@ -13,6 +13,8 @@ import numpy as np
     _search_text: percorre o ocr no texto
     locate_and_click : usa todas as funções privadas para achar o texto/botão e interargir
 """
+
+
 def _get_tesseract_cmd() -> str:
     user = getpass.getuser()
     return rf"C:\Users\{user}\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
@@ -102,12 +104,19 @@ def _search_text(ocr_data: dict, target_text: str, tolerance: int = 10) -> list[
 
 
 def locate_and_click(
-    image_index: int,
-    data: dict,
     target_text: str | list[str],
+    image_index: int = None,
+    data: dict = None,
     min_confidence: int = 30,
     click: bool = True,
 ) -> bool:
+    if data is None:
+        data = get_data()
+
+    if image_index is None:
+        image_index = data["tesseract"]["image_index"] - 1
+        print(image_index)
+
     pytesseract.pytesseract.tesseract_cmd = _get_tesseract_cmd()
 
     image_path = f"imgs/screenshot_{image_index}.png"

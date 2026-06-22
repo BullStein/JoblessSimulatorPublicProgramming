@@ -14,13 +14,14 @@ class App:
         self.locate_job_tab()
         self.pre_processing()
         time.sleep(7)
+        self._save_logged_instance()
         self.main_loop()
 
     # ── Navigation ─────────────────────────────────────────────────────────────
 
     def locate_job_tab(self) -> None:
         try:
-            found = locate_tab("chrome", ["catho", "vaga", "curriculo", "currículo"])
+            found = locate_tab("chrome", ["catho", "vaga", "Currículo"])
             if not found:
                 open_new_catho_acount_tab()
                 notificate("Notificação", "Catho não encontrada abrindo Nova Aba e login atual.")
@@ -39,6 +40,7 @@ class App:
     # ── Auth / pre-processing ──────────────────────────────────────────────────
 
     def pre_processing(self) -> None:
+        not_logged_index = 0
         while not self._is_logged():
             notificate_and_wait(
                 "Alerta!",
@@ -47,18 +49,20 @@ class App:
             locate_tab("chrome", ["catho","vaga"])
             redirect_actual_tab("https://www.catho.com.br/curriculo/dados-pessoais/")
             time.sleep(2)
+
         notificate("Notificação","Aba e conta encontrada, prosseguindo com a instância atual")
         locate_tab("chrome", ["catho","vaga"])
         redirect_actual_tab("https://www.catho.com.br/vagas/sugestao/")
         fullscreen_tab()
 
     def _is_logged(self) -> bool:
-        new_data = get_data()
-        new_data["account"]["is_logged"] = True
-        print(new_data)
-        save_data(new_data)
         possible_redirect_urls = ["catho.com.br/signin/","https://www.catho.com.br/"]
         return get_url_active_tab() not in possible_redirect_urls
+
+    def _save_logged_instance(self) -> None:
+        new_data = get_data()
+        new_data["account"]["is_logged"] = True
+        save_data(new_data)
 
     # ── Actions ────────────────────────────────────────────────────────────────
 
@@ -69,13 +73,18 @@ class App:
         return locate_and_click(self.image_index, self.data, ["Agora não"])
 
     def take_image_treatmeant(self) -> None:
-        scroll(-880)
-        set_zoom(75)
+        set_zoom(67)
+        scroll(-120)
         time.sleep(1.5)
         capture_screenshot(self.image_index, self.data)
         image_treatmeant(self.image_index, self.data)
         reset_zoom()
         scroll_page_up()
+    
+    def find_buttons(self) -> None:
+        scroll_page_up()
+        capture_screenshot(self.image_index, self.data)
+        image_treatmeant(self.image_index, self.data)
 
     # ── Main Loop ──────────────────────────────────────────────────────────────
     
@@ -84,7 +93,8 @@ class App:
         text = get_last_text()
         job = parse_job(text)
         path = save_job_parsed(job)
-
+        data = get_data()
+        locate_and_click(data=data,target_text="Quero me candidatar")
 if __name__ == "__main__":
     app = App()
     # except KeyboardInterrupt:
